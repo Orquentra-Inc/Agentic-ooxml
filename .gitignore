@@ -1,0 +1,7 @@
+target/
+.DS_Store
+website/node_modules/
+website/dist/
+website/shots/
+node_modules/
+docs/internal/

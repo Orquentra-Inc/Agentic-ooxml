@@ -1,0 +1,10 @@
+{
+  "name": "agentic-ooxml",
+  "displayName": "Agentic OOXML",
+  "version": "0.1.0",
+  "description": "Inspect, validate and annotate .docx/.pptx/.xlsx knowledge parts through the agentic-ooxml MCP server. Experimental.",
+  "author": { "name": "Agentic OOXML contributors" },
+  "repository": "https://github.com/Orquentra-Inc/Agentic-ooxml",
+  "license": "MIT",
+  "keywords": ["ooxml", "docx", "pptx", "xlsx", "mcp", "provenance"]
+}

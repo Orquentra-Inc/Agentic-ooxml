@@ -1,0 +1,25 @@
+name: Integration
+description: Add or fix support for an agent, editor or tool
+labels: [integration]
+body:
+  - type: input
+    id: target
+    attributes:
+      label: Which agent, editor or tool?
+    validations:
+      required: true
+  - type: textarea
+    id: how
+    attributes:
+      label: How would it call the library, CLI or MCP server?
+    validations:
+      required: true
+  - type: textarea
+    id: tested
+    attributes:
+      label: What have you tested?
+      description: Versions, commands, and results. Say plainly what you have not tested.
+  - type: textarea
+    id: trust
+    attributes:
+      label: How does the integration keep embedded text out of the instruction channel?

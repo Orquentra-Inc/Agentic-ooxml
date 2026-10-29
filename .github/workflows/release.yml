@@ -1,0 +1,107 @@
+# Builds release binaries when a version tag is pushed and publishes a GitHub release.
+#
+#   git tag v0.1.0 && git push origin v0.1.0
+#
+# The release notes are the matching "## [0.1.0]" section of CHANGELOG.md, or "## [Unreleased]" when
+# that section does not exist. Binaries are not signed; verify them against SHA256SUMS.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { os: ubuntu-22.04, target: x86_64-unknown-linux-gnu, archive: tar.gz }
+          - { os: macos-latest, target: aarch64-apple-darwin, archive: tar.gz }
+          - { os: macos-latest, target: x86_64-apple-darwin, archive: tar.gz }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc, archive: zip }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - name: Build
+        run: cargo build --release --locked --target ${{ matrix.target }} -p agentic-ooxml-cli -p agentic-ooxml-mcp
+      - name: Package
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="agentic-ooxml-${GITHUB_REF_NAME}-${{ matrix.target }}"
+          mkdir "$name"
+          ext=""
+          if [ "${{ matrix.archive }}" = "zip" ]; then ext=".exe"; fi
+          cp "target/${{ matrix.target }}/release/agentic-ooxml${ext}" "target/${{ matrix.target }}/release/agentic-ooxml-mcp${ext}" LICENSE "$name/"
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            7z a "${name}.zip" "$name" > /dev/null
+            echo "ASSET=${name}.zip" >> "$GITHUB_ENV"
+          else
+            tar -czf "${name}.tar.gz" "$name"
+            echo "ASSET=${name}.tar.gz" >> "$GITHUB_ENV"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ${{ env.ASSET }}
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          sha256sum -- *.tar.gz *.zip > SHA256SUMS
+          cat SHA256SUMS
+      - name: Release notes from CHANGELOG.md
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          extract() {
+            awk -v h="## [$1]" 'index($0, h) == 1 { on = 1; next } on && /^## \[/ { exit } on && /^\[[^]]+\]: / { next } on { print }' CHANGELOG.md
+          }
+          notes="$(extract "$version")"
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then notes="$(extract Unreleased)"; fi
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+            echo "CHANGELOG.md has no notes for $version or Unreleased" >&2
+            exit 1
+          fi
+          printf '%s\n' "$notes" > release-notes.md
+          {
+            echo
+            echo "Install: see the README. Verify downloads with SHA256SUMS. The binaries are not signed."
+          } >> release-notes.md
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "Agentic OOXML $GITHUB_REF_NAME" \
+            --notes-file release-notes.md \
+            --verify-tag

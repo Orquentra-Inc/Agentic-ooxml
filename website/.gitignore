@@ -1,0 +1,5 @@
+node_modules
+dist
+shots/slices
+shots/*-s[0-9]*.png
+shots/lh-*.json

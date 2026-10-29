@@ -1,0 +1,38 @@
+name: Schema proposal
+description: Propose a new part, field or behaviour in the knowledge format
+labels: [schema]
+body:
+  - type: markdown
+    attributes:
+      value: Open this before writing code. New fields must be optional and ignorable by older readers.
+  - type: textarea
+    id: field
+    attributes:
+      label: The part, element or field
+      description: Name, type, allowed values, and an XML example.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why can native OOXML not already say this?
+    validations:
+      required: true
+  - type: textarea
+    id: reader
+    attributes:
+      label: How does an agent read it, and what does an older reader do with it?
+    validations:
+      required: true
+  - type: textarea
+    id: hostile
+    attributes:
+      label: What happens when its text is hostile?
+      description: Prompt injection, size, parsing, privacy.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence it is needed
+      description: A task that fails without it, ideally with a file.

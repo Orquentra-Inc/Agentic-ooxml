@@ -1,0 +1,23 @@
+[package]
+name = "agentic-ooxml-cli"
+description = "Command-line interface for the agentic-ooxml library."
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "agentic-ooxml"
+path = "src/main.rs"
+
+[dependencies]
+agentic-ooxml = { path = "../agentic-ooxml" }
+anyhow = "1.0"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[dev-dependencies]
+zip = "2.2"
+serde_json = "1.0"

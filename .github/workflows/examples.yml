@@ -1,0 +1,41 @@
+name: Examples
+
+# Checks the synthetic example files under examples/ and the walkthrough that uses them. These are
+# structural checks. None of them opens a file in Microsoft Office or LibreOffice.
+on:
+  pull_request:
+    paths: ['examples/**', 'scripts/**', 'crates/**', '.github/workflows/examples.yml']
+  push:
+    branches: [main]
+    paths: ['examples/**', 'scripts/**', 'crates/**', '.github/workflows/examples.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build the CLI and the example generator
+        run: cargo build -p agentic-ooxml-cli -p agentic-ooxml-examples
+      - name: Independent package check (Python standard library)
+        run: python3 scripts/check-examples.py
+      - name: Validate each example with the Rust validator
+        run: |
+          for f in examples/*.pptx examples/*.xlsx examples/*.docx; do
+            echo "== $f"
+            ./target/debug/agentic-ooxml validate --file "$f" > /dev/null
+          done
+      - name: The committed examples regenerate byte for byte
+        run: |
+          ./target/debug/make-examples generate --out "$RUNNER_TEMP/regen"
+          for f in board-deck.pptx financial-model.xlsx report.docx; do
+            cmp "$RUNNER_TEMP/regen/$f" "examples/$f"
+          done
+      - name: The walkthrough output matches the committed transcript
+        run: |
+          bash scripts/demo.sh > "$RUNNER_TEMP/demo.txt"
+          diff "$RUNNER_TEMP/demo.txt" examples/demo-output.txt

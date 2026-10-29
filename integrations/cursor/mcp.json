@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "agentic-ooxml": {
+      "type": "stdio",
+      "command": "agentic-ooxml-mcp",
+      "args": [],
+      "env": {
+        "AGENTIC_OOXML_ROOTS": "${workspaceFolder}"
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = ["crates/agentic-ooxml", "crates/agentic-ooxml-cli", "crates/agentic-ooxml-mcp", "examples/generator"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/Orquentra-Inc/Agentic-ooxml"
+license = "MIT"
+publish = false

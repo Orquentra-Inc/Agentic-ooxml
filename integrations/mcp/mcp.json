@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agentic-ooxml": {
+      "command": "agentic-ooxml-mcp",
+      "args": [],
+      "env": {
+        "AGENTIC_OOXML_ROOTS": "/absolute/path/to/your/documents"
+      }
+    }
+  }
+}

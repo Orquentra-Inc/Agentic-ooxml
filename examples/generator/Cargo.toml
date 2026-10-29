@@ -1,0 +1,21 @@
+[package]
+name = "agentic-ooxml-examples"
+description = "Deterministic generator for the synthetic example files under examples/ (not published)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "make-examples"
+path = "src/main.rs"
+
+[dependencies]
+agentic-ooxml = { path = "../../crates/agentic-ooxml" }
+anyhow = "1.0"
+serde_json = "1.0"
+zip = "2.2"
+blake3 = "1.5"
+clap = { version = "4", features = ["derive"] }
+quick-xml = "0.36"
+serde = { version = "1.0", features = ["derive"] }

@@ -1,0 +1,33 @@
+name: Bug report
+description: Something does not behave as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not report security problems here. See SECURITY.md.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Command and output
+      description: The exact command, and the full output. Use `agentic-ooxml list --file F` before and after if a save is involved.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: file
+    attributes:
+      label: A file that reproduces it
+      description: A small synthetic package, or how to make one. Do not attach real or confidential documents.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit, OS, Rust version
+    validations:
+      required: true

@@ -1,0 +1,21 @@
+name: Documentation problem
+description: A page is wrong, unclear, or claims something the code does not do
+labels: [documentation]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page or section
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing?
+      description: If a command failed, paste the command and its output.
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: Suggested fix

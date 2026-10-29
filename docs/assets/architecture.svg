@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" role="img" aria-labelledby="t d">
+  <title id="t">Agentic OOXML architecture</title>
+  <desc id="d">Agents call a trusted Rust runtime through a command line interface. The runtime reads and atomically rewrites an Office Open XML package. The package keeps its native content byte-identical and gains custom XML knowledge parts for agents, design, intent and sources.</desc>
+  <defs>
+    <marker id="up" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 9 L5 1 L9 9" fill="none" stroke="#2F5BFF" stroke-width="1.4"/></marker>
+    <marker id="dn" viewBox="0 0 10 10" refX="5" refY="9" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L5 9 L9 1" fill="none" stroke="#2F5BFF" stroke-width="1.4"/></marker>
+    <style>
+      text { font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; fill: #E8EAF0; }
+      .mono { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; }
+      .h { font-size: 11px; letter-spacing: 0.14em; fill: #8A90A2; text-transform: uppercase; }
+      .t { font-size: 17px; font-weight: 600; }
+      .s { font-size: 13px; fill: #A9AEBD; }
+      .c { font-size: 12.5px; }
+      .tag { font-size: 10.5px; letter-spacing: 0.1em; }
+      .ok { fill: #6FA0FF; }
+      .plan { fill: #8A90A2; }
+    </style>
+  </defs>
+  <rect width="1200" height="680" fill="#0B0C10"/>
+  <g stroke="#1B1E27" stroke-width="1"><path d="M0 60H1200M0 120H1200M0 180H1200M0 240H1200M0 300H1200M0 360H1200M0 420H1200M0 480H1200M0 540H1200M0 600H1200"/></g>
+
+  <!-- Layer 1: agents -->
+  <text class="h" x="60" y="52">1  Agents and tools</text>
+  <g fill="#12141B" stroke="#2A2E3B">
+    <rect x="60" y="70" width="330" height="86"/>
+    <rect x="435" y="70" width="330" height="86"/>
+    <rect x="810" y="70" width="330" height="86"/>
+  </g>
+  <text class="t" x="82" y="104">Command line</text>
+  <text class="s mono" x="82" y="128">inspect  validate  diff  list  read  write</text>
+  <text class="tag ok" x="368" y="94" text-anchor="end">IMPLEMENTED</text>
+  <text class="t" x="457" y="104">MCP server</text>
+  <text class="s" x="457" y="128">stdio; read tools open, writes gated</text>
+  <text class="tag ok" x="743" y="94" text-anchor="end">IMPLEMENTED</text>
+  <text class="t" x="832" y="104">Skills and plugins</text>
+  <text class="s" x="832" y="128">Claude Code, Codex and others</text>
+  <text class="tag plan" x="1118" y="94" text-anchor="end">IN PROGRESS</text>
+
+  <!-- arrows between 1 and 2 -->
+  <g stroke="#2F5BFF" stroke-width="1.4" fill="none">
+    <path d="M225 160V222" marker-end="url(#dn)"/>
+    <path d="M285 222V160" marker-end="url(#up)"/>
+    <path d="M600 160V222" marker-end="url(#dn)" stroke-dasharray="4 4"/>
+  </g>
+  <text class="s" x="300" y="196">JSON, trust: "document"</text>
+
+  <!-- Layer 2: runtime -->
+  <text class="h" x="60" y="256">2  Trusted runtime  -  Rust crate agentic-ooxml</text>
+  <rect x="60" y="270" width="1080" height="124" fill="#12141B" stroke="#2F5BFF" stroke-width="1.4"/>
+  <g class="c mono" fill="none" stroke="#2A2E3B">
+    <rect x="84" y="296" width="150" height="34"/><rect x="246" y="296" width="150" height="34"/><rect x="408" y="296" width="190" height="34"/><rect x="610" y="296" width="190" height="34"/><rect x="812" y="296" width="150" height="34"/><rect x="974" y="296" width="140" height="34"/>
+  </g>
+  <g class="c mono" text-anchor="middle">
+    <text x="159" y="318">discover</text><text x="321" y="318">read</text><text x="503" y="318">write (atomic)</text><text x="705" y="318">claim hash (blake3)</text><text x="887" y="318">reconcile</text><text x="1044" y="318">v0.2 read</text>
+  </g>
+  <text class="s" x="84" y="362">Finds parts by relationship and namespace, never by file name. Caps entry count and part size, refuses DOCTYPE and path traversal.</text>
+  <text class="s" x="84" y="382">Embedded text is data. It never carries instructions, and it cannot switch these checks off.</text>
+
+  <path d="M600 396V450" stroke="#2F5BFF" stroke-width="1.4" marker-end="url(#dn)" marker-start="url(#up)"/>
+  <text class="s" x="616" y="428">read the package; replace it atomically</text>
+
+  <!-- Layer 3: package -->
+  <text class="h" x="60" y="466">3  The Office file  -  a standard OPC package (.docx  .pptx  .xlsx)</text>
+  <rect x="60" y="480" width="1080" height="172" fill="#0F1117" stroke="#2A2E3B"/>
+
+  <rect x="84" y="504" width="500" height="124" fill="#171A22" stroke="#2A2E3B"/>
+  <text class="t" x="104" y="534">Native content</text>
+  <text class="tag plan" x="564" y="530" text-anchor="end">OTHER ENTRIES COPIED RAW</text>
+  <g class="c mono">
+    <text x="104" y="560" class="s mono">[Content_Types].xml and main .rels gain entries</text>
+    <text x="104" y="580" class="s mono">ppt/presentation.xml  ppt/slides/*  theme</text>
+    <text x="104" y="600" class="s mono">word/document.xml  xl/workbook.xml  media</text>
+  </g>
+
+  <rect x="616" y="504" width="500" height="124" fill="#0F1530" stroke="#2F5BFF" stroke-width="1.4"/>
+  <text class="t" x="636" y="534">Agentic OOXML parts</text>
+  <text class="tag ok" x="1096" y="530" text-anchor="end">customXml, NAMESPACE ao</text>
+  <g class="c mono">
+    <text x="636" y="560" class="s mono">ao-agents.xml  ao-design.xml  ao-intent.xml</text>
+    <text x="636" y="580" class="s mono">ao-sources.xml  claim hash per record</text>
+    <text x="636" y="600" class="s mono">v0.2 context (read-only here)</text>
+  </g>
+  <path d="M584 566H616" stroke="#2F5BFF" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text class="s" x="600" y="552" text-anchor="middle" style="font-size:10px">rel</text>
+
+  <text class="s" x="60" y="672" style="font-size:11.5px">Native content is never rewritten. How Office applications and other editors treat the ao parts on open and save is not yet measured.</text>
+</svg>

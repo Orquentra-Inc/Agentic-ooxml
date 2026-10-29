@@ -1,0 +1,11 @@
+=== AO-OOXML parts through the pptx editor save ===
+V1 no edit        present 4/4 | all intact, referenced | validator 0->0
+V1 reorder slides present 4/4 | all intact, referenced | validator 0->0
+V2 no edit        present 4/4 | all intact, referenced | validator 0->0
+V2 reorder slides present 4/4 | all intact, referenced | validator 0->0
+V3 no edit        present 4/4 | all intact, referenced | validator 0->0
+V3 reorder slides present 4/4 | all intact, referenced | validator 0->0
+V4 no edit        present 1/1 | PROBLEMS: intent:NOT referenced | validator 0->0
+V4 reorder slides present 1/1 | PROBLEMS: intent:NOT referenced | validator 0->0
+V5 no edit        present 4/4 | PROBLEMS: agents:NOT referenced; design:NOT referenced; intent:NOT referenced; sources:NOT referenced | validator 0->0
+V5 reorder slides present 4/4 | PROBLEMS: agents:NOT referenced; design:NOT referenced; intent:NOT referenced; sources:NOT referenced | validator 0->0

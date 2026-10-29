@@ -1,0 +1,12 @@
+{
+  "name": "agentic-ooxml",
+  "description": "Agentic OOXML plugin for Claude Code (experimental, early release).",
+  "owner": { "name": "Agentic OOXML contributors" },
+  "plugins": [
+    {
+      "name": "agentic-ooxml",
+      "source": "./integrations/claude-code",
+      "description": "Skills and MCP server config for inspecting, validating and annotating Office files."
+    }
+  ]
+}

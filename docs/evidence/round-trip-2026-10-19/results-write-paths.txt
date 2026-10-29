@@ -1,0 +1,7 @@
+input (reference)                                          present 4/4, referenced 4/4
+officecli add slide                                        present 4/4, referenced 4/4
+officecli remove slide                                     present 4/4, referenced 4/4
+officecli set (slide background)                           present 4/4, referenced 4/4
+officecli merge (template fill)                            present 4/4, referenced 4/4
+svg_to_deck insertSlides (JSZip package merge)             present 4/4, referenced 4/4
+plain JSZip rewrite (control)                              present 4/4, referenced 4/4

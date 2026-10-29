@@ -1,0 +1,61 @@
+name: Round-trip report
+description: Report whether an editor keeps the Agentic OOXML parts when it saves a file
+labels: [round-trip]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Method: docs/contributing.md#1-report-a-round-trip. A negative result (the parts were lost) is as useful as a positive one.
+        Use a synthetic file such as `examples/board-deck.pptx`. Do not attach real or confidential documents.
+  - type: input
+    id: app
+    attributes:
+      label: Application and exact version
+      description: For example "LibreOffice Impress 24.8.2", "PowerPoint for Microsoft 365 16.x", "Google Slides import then download as .pptx".
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: Starting file
+      description: Which file you started from, for example `examples/board-deck.pptx` at a given commit.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What you did in the application
+      description: For example "opened, changed one word on slide 2, saved as .pptx under the same name" and, separately, "opened and saved without changing anything".
+    validations:
+      required: true
+  - type: textarea
+    id: before
+    attributes:
+      label: "`agentic-ooxml list --file` before"
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: after
+    attributes:
+      label: "`agentic-ooxml list --file` after"
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: diff
+    attributes:
+      label: "`agentic-ooxml diff --before ... --after ...` and `agentic-ooxml validate --file ...` on the saved file"
+      render: json
+  - type: input
+    id: tool-version
+    attributes:
+      label: agentic-ooxml version or commit
+    validations:
+      required: true

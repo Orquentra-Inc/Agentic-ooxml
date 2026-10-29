@@ -1,0 +1,639 @@
+
+== 1. Inspect the deck (filtered: units, AO parts, and the part inventory by role) ==
+$ agentic-ooxml inspect --file board-deck.pptx   # output filtered with python3 for length
+format: pptx | main part: ppt/presentation.xml | entries: 30
+  slide 1 id 256 | FY Board Update
+  slide 2 id 257 | Revenue by quarter
+  slide 3 id 258 | Full-year outlook
+  slide 4 id 259 | Risks and asks
+  AO part: agents customXml/ao-agents.xml | sections: ['figures', 'style'] | sources: None
+  AO part: design customXml/ao-design.xml | sections: ['palette', 'layout'] | sources: None
+  AO part: intent customXml/ao-intent.xml | sections: ['purpose', 'audience', 'slide-2'] | sources: None
+  AO part: sources customXml/ao-sources.xml | sections: [] | sources: 3
+  parts by role: {'ao': 4, 'content-types': 1, 'custom-xml': 4, 'main': 1, 'native': 8, 'relationships': 12}
+
+== 2. The embedded knowledge: read the intent, list the sources ==
+$ agentic-ooxml read --file board-deck.pptx --kind intent --section purpose
+{
+  "file": "board-deck.pptx",
+  "kind": "intent",
+  "trust": "document",
+  "summary": "Quarterly board update on revenue",
+  "sections": [
+    {
+      "id": "purpose",
+      "format": "text/markdown",
+      "text": "Show that FY revenue lands at EUR 75.0M and what the Q4 forecast depends on."
+    }
+  ]
+}
+$ agentic-ooxml sources --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "trust": "document",
+  "sources": [
+    {
+      "id": "q3-kpi",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B1",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "5",
+      "source_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "external_claim": {
+        "file": "financial-model.xlsx",
+        "sheet": "Summary",
+        "cell": "B1",
+        "claim_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df"
+      },
+      "claim_hash": "blake3:423a069728956684d5d81ece07a47efd371d715caea564aec5823b0507147af2",
+      "effective_status": "verified",
+      "granularity": "object",
+      "external_check": {
+        "file": "financial-model.xlsx",
+        "locator": "Summary!B1",
+        "current_value": "18.6",
+        "current_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df"
+      }
+    },
+    {
+      "id": "annual",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B2",
+      "claim_part": "/ppt/slides/slide3.xml",
+      "claim_object_id": "3",
+      "source_hash": "blake3:355804c0b52a8bd93192ecf070deb9bf56ada90a6fef9e9ef465f73294ae6057",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "claim_hash": "blake3:9c47440205fb10bf1620735393619f1afbb6b0f7ad0ccdc00cbdaa9664f8930e",
+      "effective_status": "verified",
+      "granularity": "object"
+    },
+    {
+      "id": "q4-forecast",
+      "status": "manual",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Quarterly!B5",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "6",
+      "effective_status": "manual",
+      "granularity": "object"
+    }
+  ]
+}
+
+== 3. Validate (clean) and check the cross-document links (deck vs workbook) ==
+$ agentic-ooxml validate --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "format": "pptx",
+  "trust": "document",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "entries_checked": 30,
+  "xml_parts_checked": 30,
+  "relationships_checked": 23,
+  "ao_parts_checked": 4,
+  "source_claims_checked": 3,
+  "note": "Structural checks only (zip, XML well-formedness, content types, relationships, AO parts, source staleness). No schema validation; this does not establish that Word, PowerPoint or Excel will open or render the file."
+}
+$ make-examples check-links --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "links": [
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "Q3 revenue EUR 18.6M",
+      "effective_status": "verified",
+      "id": "q3-kpi",
+      "location": "Summary!B1",
+      "verdict": "consistent",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "18.6",
+      "workbook_value_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df"
+    },
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "FY revenue EUR 75.0M",
+      "effective_status": "verified",
+      "id": "annual",
+      "location": "Summary!B2",
+      "verdict": "consistent",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "75",
+      "workbook_value_hash": "blake3:355804c0b52a8bd93192ecf070deb9bf56ada90a6fef9e9ef465f73294ae6057"
+    }
+  ],
+  "trust": "document"
+}
+
+== 4. Edit the WORKBOOK: Q3 changes from 18.6 to 19.1 (demo helper; the library does not edit cells) ==
+$ make-examples set-text --file financial-model.xlsx --part xl/worksheets/sheet1.xml --find \<v\>18.6\</v\> --replace \<v\>19.1\</v\>
+financial-model.xlsx: 1 replacement(s) in xl/worksheets/sheet1.xml
+$ make-examples set-text --file financial-model.xlsx --part xl/worksheets/sheet2.xml --find \<v\>18.6\</v\> --replace \<v\>19.1\</v\>
+financial-model.xlsx: 1 replacement(s) in xl/worksheets/sheet2.xml
+the deck was not touched: slide 2 still says, read straight from the package with Python zipfile:
+   Q3 revenue EUR 18.6M
+
+== 5. The deck's Q3 source goes stale because the workbook cell moved (the annual claim is untouched) ==
+$ agentic-ooxml sources --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "trust": "document",
+  "sources": [
+    {
+      "id": "q3-kpi",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B1",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "5",
+      "source_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "external_claim": {
+        "file": "financial-model.xlsx",
+        "sheet": "Summary",
+        "cell": "B1",
+        "claim_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df"
+      },
+      "claim_hash": "blake3:423a069728956684d5d81ece07a47efd371d715caea564aec5823b0507147af2",
+      "effective_status": "stale",
+      "stale_reason": "external_claim_changed",
+      "granularity": "object",
+      "external_check": {
+        "file": "financial-model.xlsx",
+        "locator": "Summary!B1",
+        "reason": "external_claim_changed",
+        "current_value": "19.1",
+        "current_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+      }
+    },
+    {
+      "id": "annual",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B2",
+      "claim_part": "/ppt/slides/slide3.xml",
+      "claim_object_id": "3",
+      "source_hash": "blake3:355804c0b52a8bd93192ecf070deb9bf56ada90a6fef9e9ef465f73294ae6057",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "claim_hash": "blake3:9c47440205fb10bf1620735393619f1afbb6b0f7ad0ccdc00cbdaa9664f8930e",
+      "effective_status": "verified",
+      "granularity": "object"
+    },
+    {
+      "id": "q4-forecast",
+      "status": "manual",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Quarterly!B5",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "6",
+      "effective_status": "manual",
+      "granularity": "object"
+    }
+  ]
+}
+validate still exits 0: a stale source is a warning, not corruption
+$ agentic-ooxml validate --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "format": "pptx",
+  "trust": "document",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "sources.stale",
+      "part": "q3-kpi",
+      "message": "source 'q3-kpi': verified, but now stale (external_claim_changed)"
+    }
+  ],
+  "entries_checked": 30,
+  "xml_parts_checked": 30,
+  "relationships_checked": 23,
+  "ao_parts_checked": 4,
+  "source_claims_checked": 3,
+  "note": "Structural checks only (zip, XML well-formedness, content types, relationships, AO parts, source staleness). No schema validation; this does not establish that Word, PowerPoint or Excel will open or render the file."
+}
+the cross-document helper agrees: the slide shows 18.6, the workbook says 19.1:
+$ make-examples check-links --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "links": [
+    {
+      "claim_shows_workbook_value": false,
+      "claim_text": "Q3 revenue EUR 18.6M",
+      "effective_status": "stale",
+      "id": "q3-kpi",
+      "location": "Summary!B1",
+      "verdict": "claim_differs_from_workbook",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "19.1",
+      "workbook_value_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+    },
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "FY revenue EUR 75.0M",
+      "effective_status": "verified",
+      "id": "annual",
+      "location": "Summary!B2",
+      "verdict": "consistent",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "75",
+      "workbook_value_hash": "blake3:355804c0b52a8bd93192ecf070deb9bf56ada90a6fef9e9ef465f73294ae6057"
+    }
+  ],
+  "trust": "document"
+}
+(exit code 1)
+
+== 6. The agent updates slide 2 (demo helper); the claim stays stale until it is re-verified ==
+$ make-examples set-text --file board-deck.pptx --part ppt/slides/slide2.xml --find EUR\ 18.6M --replace EUR\ 19.1M
+board-deck.pptx: 1 replacement(s) in ppt/slides/slide2.xml
+$ agentic-ooxml sources --file board-deck.pptx --part /ppt/slides/slide2.xml --object 5
+{
+  "file": "board-deck.pptx",
+  "trust": "document",
+  "sources": [
+    {
+      "id": "q3-kpi",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B1",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "5",
+      "source_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "external_claim": {
+        "file": "financial-model.xlsx",
+        "sheet": "Summary",
+        "cell": "B1",
+        "claim_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df"
+      },
+      "claim_hash": "blake3:423a069728956684d5d81ece07a47efd371d715caea564aec5823b0507147af2",
+      "effective_status": "stale",
+      "stale_reason": "external_claim_changed",
+      "stale_reasons": [
+        "external_claim_changed",
+        "claim_changed"
+      ],
+      "granularity": "object",
+      "external_check": {
+        "file": "financial-model.xlsx",
+        "locator": "Summary!B1",
+        "reason": "external_claim_changed",
+        "current_value": "19.1",
+        "current_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+      }
+    }
+  ]
+}
+the slide now shows the workbook value, but the record has not been re-verified, so the helper still exits 1:
+$ make-examples check-links --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "links": [
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "Q3 revenue EUR 19.1M",
+      "effective_status": "stale",
+      "id": "q3-kpi",
+      "location": "Summary!B1",
+      "verdict": "needs_reverification",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "19.1",
+      "workbook_value_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+    },
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "FY revenue EUR 75.0M",
+      "effective_status": "verified",
+      "id": "annual",
+      "location": "Summary!B2",
+      "verdict": "consistent",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "75",
+      "workbook_value_hash": "blake3:355804c0b52a8bd93192ecf070deb9bf56ada90a6fef9e9ef465f73294ae6057"
+    }
+  ],
+  "trust": "document"
+}
+(exit code 1)
+
+== 7. Diff before and after (native part hashes, source status, the external value) ==
+$ agentic-ooxml diff --before before/board-deck.pptx --after board-deck.pptx
+{
+  "before": "before/board-deck.pptx",
+  "after": "board-deck.pptx",
+  "trust": "document",
+  "identical": false,
+  "ao_parts": [],
+  "sources": [
+    {
+      "id": "q3-kpi",
+      "change": "changed",
+      "before": {
+        "status": "verified",
+        "effective_status": "verified",
+        "claim_part": "/ppt/slides/slide2.xml",
+        "claim_object_id": "5",
+        "claim_hash": "blake3:423a069728956684d5d81ece07a47efd371d715caea564aec5823b0507147af2",
+        "external_locator": "financial-model.xlsx:Summary!B1",
+        "external_value_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df",
+        "resource_uri": "financial-model.xlsx",
+        "location": "Summary!B1"
+      },
+      "after": {
+        "status": "verified",
+        "effective_status": "stale",
+        "stale_reason": "external_claim_changed",
+        "claim_part": "/ppt/slides/slide2.xml",
+        "claim_object_id": "5",
+        "claim_hash": "blake3:423a069728956684d5d81ece07a47efd371d715caea564aec5823b0507147af2",
+        "external_locator": "financial-model.xlsx:Summary!B1",
+        "external_value_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6",
+        "external_reason": "external_claim_changed",
+        "resource_uri": "financial-model.xlsx",
+        "location": "Summary!B1"
+      }
+    }
+  ],
+  "native_parts": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      {
+        "part": "ppt/slides/slide2.xml",
+        "before": "blake3:3a47555ef751a3c8723c587d76e5fb501dce7901f9ab00fa9d729c93bf917c59",
+        "after": "blake3:af06780a13f9779af1b2b0fffa582ff63a6a249edf8b4337afd14dc1ff010cd2"
+      }
+    ]
+  },
+  "package_plumbing": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  }
+}
+
+== 8. Reconcile: dry run, then persist the stale status ==
+$ agentic-ooxml reconcile --file board-deck.pptx --dry-run
+{
+  "file": "board-deck.pptx",
+  "invalidated": [
+    {
+      "id": "q3-kpi",
+      "reason": "external_claim_changed"
+    }
+  ],
+  "unchanged": 2,
+  "written": false
+}
+$ agentic-ooxml reconcile --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "invalidated": [
+    {
+      "id": "q3-kpi",
+      "reason": "external_claim_changed"
+    }
+  ],
+  "unchanged": 2,
+  "written": true
+}
+after reconcile the stored status itself is stale, and validate says so:
+$ agentic-ooxml validate --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "format": "pptx",
+  "trust": "document",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "sources.stale",
+      "part": "q3-kpi",
+      "message": "source 'q3-kpi': recorded as stale"
+    }
+  ],
+  "entries_checked": 30,
+  "xml_parts_checked": 30,
+  "relationships_checked": 23,
+  "ao_parts_checked": 4,
+  "source_claims_checked": 3,
+  "note": "Structural checks only (zip, XML well-formedness, content types, relationships, AO parts, source staleness). No schema validation; this does not establish that Word, PowerPoint or Excel will open or render the file."
+}
+
+== 9. Re-verify: the sources write path re-reads Summary!B1 and takes a new baseline ==
+$ cat verify.json
+{"sources": [{"id": "q3-kpi", "status": "verified", "checked_at": "2026-10-29"}]}
+$ agentic-ooxml write --file board-deck.pptx --kind sources --input verify.json
+{
+  "part": "customXml/ao-sources.xml",
+  "created": false,
+  "sections": [],
+  "sources": [
+    "q3-kpi",
+    "annual",
+    "q4-forecast"
+  ]
+}
+$ agentic-ooxml sources --file board-deck.pptx --part /ppt/slides/slide2.xml --object 5
+{
+  "file": "board-deck.pptx",
+  "trust": "document",
+  "sources": [
+    {
+      "id": "q3-kpi",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B1",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "5",
+      "source_hash": "blake3:fb2b97d104a65d9876954e6eae7a994c2bbee3ead4c0716ce850009b28fc22df",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "external_claim": {
+        "file": "financial-model.xlsx",
+        "sheet": "Summary",
+        "cell": "B1",
+        "claim_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+      },
+      "claim_hash": "blake3:677821caae1ff11c81526388fc5bfa2a3695606b78e99f672c2887ba8ab1244a",
+      "effective_status": "verified",
+      "granularity": "object",
+      "external_check": {
+        "file": "financial-model.xlsx",
+        "locator": "Summary!B1",
+        "current_value": "19.1",
+        "current_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+      }
+    }
+  ]
+}
+
+== 10. The annual figure: workbook 75.5, then slide 3, then re-verify from the generated patch ==
+$ make-examples set-text --file financial-model.xlsx --part xl/worksheets/sheet1.xml --find \<v\>75\</v\> --replace \<v\>75.5\</v\>
+financial-model.xlsx: 1 replacement(s) in xl/worksheets/sheet1.xml
+$ make-examples set-text --file financial-model.xlsx --part xl/worksheets/sheet2.xml --find \<f\>SUM\(B2:B5\)\</f\>\<v\>75\</v\> --replace \<f\>SUM\(B2:B5\)\</f\>\<v\>75.5\</v\>
+financial-model.xlsx: 1 replacement(s) in xl/worksheets/sheet2.xml
+$ make-examples set-text --file board-deck.pptx --part ppt/slides/slide3.xml --find EUR\ 75.0M --replace EUR\ 75.5M
+board-deck.pptx: 1 replacement(s) in ppt/slides/slide3.xml
+$ make-examples link-patch --file board-deck.pptx > relink.json   # contents of relink.json:
+{
+  "sources": [
+    {
+      "checked_at": "2026-10-29",
+      "id": "q3-kpi",
+      "source_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "status": "verified"
+    },
+    {
+      "checked_at": "2026-10-29",
+      "id": "annual",
+      "source_hash": "blake3:491ae221736e05ab963be0a0996fddde093ef997807541714223cdb6cff5e525",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "status": "verified"
+    }
+  ]
+}
+$ agentic-ooxml write --file board-deck.pptx --kind sources --input relink.json
+{
+  "part": "customXml/ao-sources.xml",
+  "created": false,
+  "sections": [],
+  "sources": [
+    "q3-kpi",
+    "annual",
+    "q4-forecast"
+  ]
+}
+
+== 11. After: sources verified, links consistent, package valid ==
+$ agentic-ooxml sources --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "trust": "document",
+  "sources": [
+    {
+      "id": "q3-kpi",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B1",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "5",
+      "source_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "external_claim": {
+        "file": "financial-model.xlsx",
+        "sheet": "Summary",
+        "cell": "B1",
+        "claim_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+      },
+      "claim_hash": "blake3:677821caae1ff11c81526388fc5bfa2a3695606b78e99f672c2887ba8ab1244a",
+      "effective_status": "verified",
+      "granularity": "object",
+      "external_check": {
+        "file": "financial-model.xlsx",
+        "locator": "Summary!B1",
+        "current_value": "19.1",
+        "current_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+      }
+    },
+    {
+      "id": "annual",
+      "status": "verified",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Summary!B2",
+      "claim_part": "/ppt/slides/slide3.xml",
+      "claim_object_id": "3",
+      "source_hash": "blake3:491ae221736e05ab963be0a0996fddde093ef997807541714223cdb6cff5e525",
+      "source_hash_algorithm": "blake3-of-cell-value",
+      "claim_hash": "blake3:0cbf8712db442b133d028139259c900ea826deebf0b730d28b96cb5f02a798c6",
+      "effective_status": "verified",
+      "granularity": "object"
+    },
+    {
+      "id": "q4-forecast",
+      "status": "manual",
+      "source_kind": "spreadsheet",
+      "checked_at": "2026-10-29",
+      "resource_uri": "financial-model.xlsx",
+      "location": "Quarterly!B5",
+      "claim_part": "/ppt/slides/slide2.xml",
+      "claim_object_id": "6",
+      "effective_status": "manual",
+      "granularity": "object"
+    }
+  ]
+}
+$ make-examples check-links --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "links": [
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "Q3 revenue EUR 19.1M",
+      "effective_status": "verified",
+      "id": "q3-kpi",
+      "location": "Summary!B1",
+      "verdict": "consistent",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "19.1",
+      "workbook_value_hash": "blake3:9e269f41177c68adfd68c6c0a04103dd6634c1a309f384c0e10fda811e54c2f6"
+    },
+    {
+      "claim_shows_workbook_value": true,
+      "claim_text": "FY revenue EUR 75.5M",
+      "effective_status": "verified",
+      "id": "annual",
+      "location": "Summary!B2",
+      "verdict": "consistent",
+      "workbook": "financial-model.xlsx",
+      "workbook_value": "75.5",
+      "workbook_value_hash": "blake3:491ae221736e05ab963be0a0996fddde093ef997807541714223cdb6cff5e525"
+    }
+  ],
+  "trust": "document"
+}
+$ agentic-ooxml validate --file board-deck.pptx
+{
+  "file": "board-deck.pptx",
+  "format": "pptx",
+  "trust": "document",
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "entries_checked": 30,
+  "xml_parts_checked": 30,
+  "relationships_checked": 23,
+  "ao_parts_checked": 4,
+  "source_claims_checked": 3,
+  "note": "Structural checks only (zip, XML well-formedness, content types, relationships, AO parts, source staleness). No schema validation; this does not establish that Word, PowerPoint or Excel will open or render the file."
+}
+
+Note: the workbook cached values were edited as text; a spreadsheet application would recalculate
+them on open (the workbook sets fullCalcOnLoad), and this library never recalculates formulas: it
+compares the cached cell value it can read. This demo does not open any file in Office.

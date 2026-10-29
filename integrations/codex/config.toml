@@ -1,0 +1,12 @@
+# Add to ~/.codex/config.toml, or to .codex/config.toml in a trusted project.
+[mcp_servers.agentic_ooxml]
+command = "agentic-ooxml-mcp"
+args = []
+startup_timeout_sec = 20
+# Optional: restrict to read-only tools.
+# enabled_tools = ["ao_inspect", "ao_list", "ao_read", "ao_sources", "ao_validate", "ao_diff"]
+
+[mcp_servers.agentic_ooxml.env]
+AGENTIC_OOXML_ROOTS = "/absolute/path/to/your/documents"
+# Writes are refused by default. To allow them, add to the table above:
+# AGENTIC_OOXML_ALLOW_WRITE = "1"
