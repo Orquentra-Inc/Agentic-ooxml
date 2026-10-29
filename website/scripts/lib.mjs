@@ -4,6 +4,7 @@ export const BASE = process.env.SITE_BASE ?? '/Agentic-ooxml/'
 export const PORT = 4173
 export const PAGES = [
   { name: 'home', path: '' },
+  { name: 'how', path: 'how-it-works/' },
   { name: 'why', path: 'why/' },
   { name: 'contribute', path: 'contribute/' },
   { name: '404', path: '404.html' },

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { SectionHead, Badge } from './Chrome'
 import { Reveal } from './Reveal'
-import { DiffAnim } from './DiffAnim'
 
 type ToolState = 'lib' | 'new'
 interface Step { id: string; name: string; summary: string; tools: { n: string; s: ToolState }[]; detail: string[]; note?: string }
@@ -28,7 +27,7 @@ export function WorkflowScene() {
   return (
     <section id="workflow" className="scene" aria-labelledby="h-flow">
       <div className="wrap">
-        <SectionHead n="05" eyebrow="The agent workflow" id="h-flow" lede="This is the intended workflow, not a recording of one. The tool names are the MCP surface of the server in this repository, which you can install from source or GitHub Releases.">
+        <SectionHead n="03" total="05" eyebrow="The agent workflow" id="h-flow" lede="This is the intended workflow, not a recording of one. The tool names are the MCP surface of the server in this repository, which you can install from source or GitHub Releases.">
           Inspect, interpret, plan, modify, validate, review.
         </SectionHead>
         <Reveal>
@@ -58,7 +57,6 @@ export function WorkflowScene() {
           <p className="small muted fine">
             <Badge kind="wip">Not verified with an agent</Badge> Every tool above exists in the Rust crates and is tested over stdio by the repository's own checks. The workflow itself is the intended use: it has not been run end to end with a coding agent, and the integrations are not verified.
           </p>
-          <DiffAnim />
         </Reveal>
       </div>
     </section>

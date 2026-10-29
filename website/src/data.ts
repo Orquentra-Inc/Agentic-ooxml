@@ -7,6 +7,9 @@ export const BASE = import.meta.env.BASE_URL
 export const docsUrl = (path = '') => `${REPO}/blob/main/${path}`
 export const treeUrl = (path = '') => `${REPO}/tree/main/${path}`
 
+export const INSTALL_CMD = 'curl -fsSL https://raw.githubusercontent.com/Orquentra-Inc/Agentic-ooxml/main/scripts/install.sh | sh'
+export const CARGO_CMD = 'cargo install --git https://github.com/Orquentra-Inc/Agentic-ooxml agentic-ooxml-cli agentic-ooxml-mcp'
+
 export const AO_NS = 'urn:agentic-office:ooxml:v0.1'
 export const CTX_NS = 'urn:agentic-office:context:v0.2'
 

@@ -1,22 +1,23 @@
 import type { ReactNode } from 'react'
 import { BASE, REPO, docsUrl } from '../data'
 
-export function Header({ current }: { current: 'home' | 'why' | 'contribute' | 'other' }) {
+export type PageId = 'home' | 'how' | 'why' | 'contribute' | 'other'
+
+export function Header({ current }: { current: PageId }) {
   return (
     <header className="site-header">
       <a className="skip" href="#main">Skip to content</a>
       <div className="wrap header-row">
         <a className="brand" href={BASE} aria-label="Agentic OOXML, home">
           <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect x="3.5" y="3.5" width="25" height="25" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M3.5 21.5h25" stroke="var(--cobalt)" strokeWidth="1.6" /><rect x="9" y="9" width="8" height="8" fill="var(--cobalt)" /></svg>
-          <span>Agentic OOXML</span>
+          <span className="brand-name">Agentic OOXML</span>
         </a>
         <nav aria-label="Primary">
           <ul>
-            <li className="hide-sm"><a href={`${BASE}#inspector`}>Inspector</a></li>
-            <li className="hide-sm"><a href={`${BASE}#install`}>Install</a></li>
+            <li><a href={`${BASE}how-it-works/`} aria-current={current === 'how' ? 'page' : undefined}>How it works</a></li>
             <li><a href={`${BASE}why/`} aria-current={current === 'why' ? 'page' : undefined}>Why</a></li>
             <li><a href={`${BASE}contribute/`} aria-current={current === 'contribute' ? 'page' : undefined}>Contribute</a></li>
-            <li><a href={docsUrl('docs/')}>Docs</a></li>
+            <li className="hide-sm"><a href={docsUrl('docs/')}>Docs</a></li>
             <li><a href={REPO} className="btn-ghost">GitHub</a></li>
           </ul>
         </nav>
@@ -38,6 +39,8 @@ export function Footer() {
           <ul className="plain">
             <li><a href={REPO}>Repository</a></li>
             <li><a href={docsUrl('docs/')}>Documentation</a></li>
+            <li><a href={`${BASE}how-it-works/`}>How it works</a></li>
+            <li><a href={`${BASE}why/`}>Why</a></li>
             <li><a href={`${BASE}contribute/`}>Contribute</a></li>
             <li><a href={docsUrl('LICENSE')}>License (MIT)</a></li>
           </ul>
@@ -54,7 +57,7 @@ export function Footer() {
   )
 }
 
-export function Page({ current, children }: { current: 'home' | 'why' | 'contribute' | 'other'; children: ReactNode }) {
+export function Page({ current, children }: { current: PageId; children: ReactNode }) {
   return (
     <>
       <Header current={current} />
@@ -64,7 +67,7 @@ export function Page({ current, children }: { current: 'home' | 'why' | 'contrib
   )
 }
 
-export function SectionHead({ n, total = '08', eyebrow, id, children, lede }: { n: string; total?: string; eyebrow: string; id: string; children: ReactNode; lede?: ReactNode }) {
+export function SectionHead({ n, total = '', eyebrow, id, children, lede }: { n: string; total?: string; eyebrow: string; id: string; children: ReactNode; lede?: ReactNode }) {
   return (
     <div className="section-head">
       <p className="eyebrow"><span className="mono">{n}{total ? ` / ${total}` : ''}</span><span className="rule" aria-hidden="true" />{eyebrow}</p>

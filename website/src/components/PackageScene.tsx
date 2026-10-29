@@ -20,7 +20,7 @@ export function PackageScene() {
   return (
     <section id="package" className="scene" aria-labelledby="h-package">
       <div className="wrap">
-        <SectionHead n="02" eyebrow="The package" id="h-package" lede="A slide you see is the output of a ZIP archive of XML parts, tied together by relationships. That structure is a published standard, and it already has a place for custom data.">
+        <SectionHead n="01" total="05" eyebrow="The package" id="h-package" lede="A slide you see is the output of a ZIP archive of XML parts, tied together by relationships. That structure is a published standard, and it already has a place for custom data.">
           A rendered slide is a package of parts.
         </SectionHead>
         <Reveal>

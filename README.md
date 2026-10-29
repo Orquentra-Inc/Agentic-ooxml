@@ -1,14 +1,34 @@
 # Agentic OOXML
 
-**Give your agents a document model, not just a file.**
+**Let an agent edit the board deck. Know when a number moved.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+Who a deck is for, where each figure came from and what must not change are stored **inside the
+`.pptx`, `.docx` or `.xlsx` itself**. The next edit starts with that context, and a number that moved
+gets flagged instead of silently trusted. **[See it on the project site](https://orquentra-inc.github.io/Agentic-ooxml/)**,
+with a live demo of a stale number being caught.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Orquentra-Inc/Agentic-ooxml/main/scripts/install.sh | sh
+```
+
+Linux and macOS, no Rust needed; it installs `agentic-ooxml` and `agentic-ooxml-mcp` into `~/.local/bin`
+after checking the release checksum. Windows, Cargo and Claude Code routes are under [Install](#install).
+
+- **The file notices when a number moves.** Edit the workbook cell a slide quotes and the deck's source
+  reports `stale` (`external_claim_changed`), though the deck was never touched. Real output:
+  [examples/demo-output.txt](examples/demo-output.txt).
+- **Your original is safe by default.** Through MCP, writes are off unless `AGENTIC_OOXML_ALLOW_WRITE=1`,
+  produce a sibling `.ao-proposed` copy, and stay inside `AGENTIC_OOXML_ROOTS`. Native package entries are copied byte for byte.
+- **Every edit is reviewable, and it stays local.** `diff` and `validate` show what changed and whether the package
+  is sound; the core, CLI and MCP crates have no network dependency. Open source (MIT).
+
 Agentic OOXML stores the context an agent needs to edit an Office file correctly, such as who it is
-for, how it should look, and where its numbers came from, **inside the `.docx`, `.pptx` or `.xlsx`
-itself**, as standard OOXML custom XML parts. A Rust library and command line read and write those parts,
-and report when a sourced number has changed since someone checked it. It never copies the document's
-own structure, so there is no second copy to drift.
+for, how it should look, and where its numbers came from, as standard OOXML custom XML parts. A Rust library and
+command line read and write those parts, and report when a sourced number has changed since someone checked it.
+It never copies the document's own structure, so there is no second copy to drift. It does not edit slides,
+cells or paragraphs, and it does not check that your numbers are right.
 
 ![Architecture: agents call a trusted Rust runtime, which reads and atomically rewrites an Office file that keeps its native content and gains Agentic OOXML parts](docs/assets/architecture.svg)
 
@@ -30,7 +50,7 @@ Read the [roadmap](ROADMAP.md) for what is implemented, in progress, proposed an
 ## Install
 
 Agentic OOXML is an **early release (version 0.1)**. It is **not on crates.io or npm**, and there are
-no packages for any other registry. Pick one of the three routes below. Round trips through Microsoft
+no packages for any other registry. Pick one of the routes below. Round trips through Microsoft
 Office, LibreOffice, ONLYOFFICE and Google are **unmeasured** (see [Compatibility](docs/compatibility.md)).
 
 **A. From source** (needs a Rust toolchain). `cargo install` accepts only one `--path`, so this is two commands:
@@ -52,8 +72,8 @@ cargo install --git https://github.com/Orquentra-Inc/Agentic-ooxml agentic-ooxml
 Both put `agentic-ooxml` and `agentic-ooxml-mcp` in `~/.cargo/bin`. To work inside a checkout without
 installing, use `cargo build --release` and put `target/release` on your `PATH`.
 
-**B. Prebuilt binaries** from [GitHub Releases](https://github.com/Orquentra-Inc/Agentic-ooxml/releases),
-once a release has been tagged: Linux x86_64, macOS arm64 and x86_64, Windows x86_64, each with a
+**B. Prebuilt binaries** from [GitHub Releases](https://github.com/Orquentra-Inc/Agentic-ooxml/releases)
+(v0.1.0): Linux x86_64, macOS arm64 and x86_64, Windows x86_64, each with a
 `SHA256SUMS` file. They are not signed. On Linux and macOS the install script downloads the right
 archive, verifies its checksum and installs into `~/.local/bin`:
 
@@ -62,7 +82,7 @@ curl -fsSL https://raw.githubusercontent.com/Orquentra-Inc/Agentic-ooxml/main/sc
 ```
 
 (Read [scripts/install.sh](scripts/install.sh) first if you do not run scripts from the internet blindly.
-`AO_VERSION=v0.1.0` pins a release.) If the Releases page is empty, use route A.
+`AO_VERSION=v0.1.0` pins a release.) On other platforms, use route A.
 
 **C. Claude Code plugin**, which adds the skills and an MCP server entry. The plugin does not bundle
 the `agentic-ooxml-mcp` binary: install it with route A or B first.

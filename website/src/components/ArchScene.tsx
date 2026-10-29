@@ -14,7 +14,7 @@ export function ArchScene() {
   return (
     <section id="architecture" className="scene" aria-labelledby="h-arch">
       <div className="wrap">
-        <SectionHead n="06" eyebrow="Architecture" id="h-arch" lede="Native OOXML stays authoritative. A small trusted core reads and writes the extra parts; everything agent-facing is a thin layer over it.">
+        <SectionHead n="04" total="05" eyebrow="Architecture" id="h-arch" lede="Native OOXML stays authoritative. A small trusted core reads and writes the extra parts; everything agent-facing is a thin layer over it.">
           What exists, what is coming, what is only proposed.
         </SectionHead>
         <Reveal>

@@ -1,23 +1,24 @@
 import { Page } from './components/Chrome'
 import { Hero } from './components/Hero'
-import { PackageScene } from './components/PackageScene'
-import { LayersScene } from './components/LayersScene'
 import { StaleScene } from './components/StaleScene'
-import { WorkflowScene } from './components/WorkflowScene'
-import { ArchScene } from './components/ArchScene'
-import { InstallScene } from './components/InstallScene'
-import { CloseScene } from './components/CloseScene'
+import { DiffScene } from './components/DiffScene'
+import { RunScene } from './components/RunScene'
+import { AudienceScene, CostScene, FaqScene, FinalCta, HighlightsScene, LimitsScene, QuestionsScene, WorksWithScene } from './components/Sell'
 import { mount } from './mount'
 
 mount(
   <Page current="home">
     <Hero />
-    <PackageScene />
-    <LayersScene />
+    <CostScene />
+    <QuestionsScene />
     <StaleScene />
-    <WorkflowScene />
-    <ArchScene />
-    <InstallScene />
-    <CloseScene />
+    <DiffScene />
+    <RunScene />
+    <HighlightsScene />
+    <AudienceScene />
+    <WorksWithScene />
+    <LimitsScene />
+    <FaqScene />
+    <FinalCta />
   </Page>,
 )

@@ -32,6 +32,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        how: resolve(__dirname, 'how-it-works/index.html'),
         why: resolve(__dirname, 'why/index.html'),
         contribute: resolve(__dirname, 'contribute/index.html'),
         notfound: resolve(__dirname, '404.html'),

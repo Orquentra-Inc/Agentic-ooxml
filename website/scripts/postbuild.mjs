@@ -2,7 +2,7 @@
 import { writeFileSync, existsSync } from 'node:fs'
 
 const site = (process.env.SITE_URL ?? 'https://orquentra-inc.github.io/Agentic-ooxml').replace(/\/$/, '')
-const pages = ['/', '/why/', '/contribute/']
+const pages = ['/', '/how-it-works/', '/why/', '/contribute/']
 const today = new Date().toISOString().slice(0, 10)
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages
   .map((p) => `  <url><loc>${site}${p}</loc><lastmod>${today}</lastmod></url>`)

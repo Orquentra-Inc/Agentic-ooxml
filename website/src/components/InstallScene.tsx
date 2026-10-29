@@ -24,7 +24,7 @@ export function InstallScene() {
   return (
     <section id="install" className="scene" aria-labelledby="h-install">
       <div className="wrap">
-        <SectionHead n="07" eyebrow="Install" id="h-install" lede="Early release, version 0.1. Not on crates.io or npm: install from source, from GitHub Releases, or through the Claude Code marketplace.">
+        <SectionHead n="05" total="05" eyebrow="Install" id="h-install" lede="Early release, version 0.1. Not on crates.io or npm: install from source, from GitHub Releases, or through the Claude Code marketplace.">
           Install paths.
         </SectionHead>
         <Reveal>
@@ -42,9 +42,9 @@ export function InstallScene() {
           </div>
           <div className="panel from-source">
             <h3>Prebuilt binaries</h3>
-            <p className="small">Once a release is tagged, <a href={`${REPO}/releases`}>GitHub Releases</a> carries Linux x86_64, macOS arm64 and x86_64, and Windows x86_64 archives with a <span className="mono">SHA256SUMS</span> file. They are not signed. On Linux and macOS, <a href={docsUrl('scripts/install.sh')}>scripts/install.sh</a> verifies the checksum and installs into <span className="mono">~/.local/bin</span>.</p>
+            <p className="small"><a href={`${REPO}/releases`}>GitHub Releases</a> (v0.1.0) carries Linux x86_64, macOS arm64 and x86_64, and Windows x86_64 archives with a <span className="mono">SHA256SUMS</span> file. They are not signed. On Linux and macOS, <a href={docsUrl('scripts/install.sh')}>scripts/install.sh</a> verifies the checksum and installs into <span className="mono">~/.local/bin</span>.</p>
             <pre className="code" tabIndex={0} aria-label="Install script"><code>{`curl -fsSL https://raw.githubusercontent.com/Orquentra-Inc/Agentic-ooxml/main/scripts/install.sh | sh`}</code></pre>
-            <p className="small muted">If the Releases page is empty, build from source.</p>
+            <p className="small muted">Windows x86_64 is a .zip you unpack by hand. On any other platform, build from source.</p>
           </div>
         </Reveal>
       </div>

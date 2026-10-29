@@ -14,7 +14,7 @@ export function LayersScene() {
   return (
     <section id="inspector" className="scene" aria-labelledby="h-layers">
       <div className="wrap">
-        <SectionHead n="03" eyebrow="The layers" id="h-layers" lede="Four small XML parts, each answering a different question for the next agent to open the file. A fifth, the requirement contract, arrives in the v0.2 context schema.">
+        <SectionHead n="02" total="05" eyebrow="The layers" id="h-layers" lede="Four small XML parts, each answering a different question for the next agent to open the file. A fifth, the requirement contract, arrives in the v0.2 context schema.">
           Agents, design, intent, sources.
         </SectionHead>
         <Reveal>
